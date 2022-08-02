@@ -5,7 +5,7 @@
       Testador Inteligente de ESP32
 
       → O que este código testará:
-
+      
         ∘ WiFi;
         ∘ Tasks;
         ∘ Portas de saída;
@@ -17,7 +17,7 @@
   EN
       Smart ESP32 Tester
 
-      → What this code will test:
+      → What does this code tests:
 
         ∘ WiFi;
         ∘ Tasks;
