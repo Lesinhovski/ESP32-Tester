@@ -27,7 +27,7 @@
       How to use the code:
         → Upload the code to the ESP32 then open the serial monitor.
   
-  v1.31
+  v1.32
                        
 ----------------------- User Area ----------------------- */
 
@@ -139,7 +139,7 @@ void loop() {
     if(!testCompleted)
       testCompleted = verifyInputPins();
 
-    if(millis() - inputTestTime >= 40000){
+    if(!testCompleted && millis() - inputTestTime >= 40000){
       Serial.println("");
 
       IO2  ? Serial.print(""): Serial.println("IO2  NOT OK!");
