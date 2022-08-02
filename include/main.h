@@ -5,6 +5,3 @@ void core_0(void *pvParameters);
 void core_1(void *pvParameters);
 
 bool verifyInputPins();
-
-
-
