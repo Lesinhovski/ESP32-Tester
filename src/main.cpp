@@ -92,9 +92,10 @@ void setup()
         else{
           Serial.println("\n --- WIFI OK! ---");
         }
-      }
-    }else
-      Serial.println("\n* Jumping Wifi Test! *");
+      } else
+        Serial.println("\n --- WIFI OK! ---");
+    } else
+      Serial.println("\n* Skiping Wifi Test! *");
     delay(1000);
 
     // Output pins
