@@ -1,6 +1,6 @@
 # ESP32-TESTER
 
-This code will test every ESP32 ports.
-Also will test tasks on both cores, and optionally will test input ports and ESP WiFi.
+This code will test every ESP32 ports and tasks on both cores.
+Also will optionally test input ports and ESP32 WiFi.
 
-You can enable/disable WiFi and input tests changing the variables at User Area.
+You can enable/disable WiFi and input tests changing the variables at User Area (main.cpp).
