@@ -1,34 +1,18 @@
 #include <main.h>
 
 /*
-  PT-BR
-      Testador Inteligente de ESP32
-
-      → O que este código testará:
-      
-        ∘ WiFi;
-        ∘ Tasks;
-        ∘ Portas de saída;
-        ∘ Portas de entrada;
-
-      Como usar:
-        → Gravar o código no ESP32 e abrir o monitor serial.
-
-  EN
       Smart ESP32 Tester
 
       → What does this code tests:
 
-        ∘ WiFi;
-        ∘ Tasks;
+        ∘ ESP WiFi;
+        ∘ Cores and Tasks;
         ∘ Output pins;
         ∘ Input pins;
-
-      How to use the code:
-        → Upload the code to the ESP32 then open the serial monitor.
   
-  v1.32
-                       
+  v1.4.0
+
+
 ----------------------- User Area ----------------------- */
 
 // Wifi
@@ -36,10 +20,16 @@ const char * ssid = "";
 const char * password = "";
 
 // Configuration
-bool testWifi = 1; 
+bool testWifi = 0; 
 bool testInput = 0;
 
 /* ------------------------------------------------------ */
+
+byte inputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39};
+byte outputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33};
+
+TaskHandle_t core0_Handle = NULL;
+TaskHandle_t core1_Handle = NULL;
 
 unsigned long resetMillis = 0, inputTestTime = 0;
 bool testCompleted, taskTested = 0, core0 = 0, core1 = 0,
@@ -51,56 +41,37 @@ IO13 = 0,IO21 = 0, IO33 = 0,
 IO14 = 0,IO22 = 0, IO34 = 0,
 IO15 = 0,IO23 = 0, IO35 = 0;
 
-byte inputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39};
-byte outputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33};
-
-TaskHandle_t core0_Handle = NULL;
-TaskHandle_t core1_Handle = NULL;
-
-void setup() 
-{
+void setup() {
     Serial.begin(115200);
-    Serial.println("\n------------ ESP32 TESTER STARTED! ------------");
-
+    Serial.println("\n------------ ESP32 Test Started! ------------");
+    
     // WIFI TEST
-    if(testWifi){
-      Serial.println("\n → Initializing wifi Test!\n\nConnecting...\n First try");
+    if(ssid == ""){
+      Serial.println("Check your wifi ssid");
+      testWifi = false;      
+    } if(testWifi) {
+      Serial.println("\n → Initializing wifi Test!\n\nConnecting...");
       WiFi.begin(ssid, password);
-      delay(30);
-      if(WiFi.status() == WL_CONNECTED)
-        Serial.println("\n\n --- WIFI OK! ---");
-      else{
-        for(int tries = 2; tries < 5; tries++){
-          Serial.printf("\n Tries: %d\n", tries);
-          Serial.println("Connecting...");
-          WiFi.disconnect();
-          WiFi.begin(ssid, password);
-          delay(3000);
-          if(WiFi.status() == WL_CONNECTED){
-            Serial.println("\n --- WIFI OK! ---");
-            break;
-          }else;
+
+      for(int tries = 1; tries < 5; tries++) {
+        Serial.printf("\n Tries: %d\n", tries);
+        WiFi.disconnect();
+        WiFi.begin();
+        delay(3000);
+        if(WiFi.status() == WL_CONNECTED) {
+          Serial.println("\n --- WIFI OK! ---");
+          break;
         }
       }
-      if(WiFi.status() != WL_CONNECTED){
-        Serial.println("\n\n*** Last try! ***\nConnecting...");
-        WiFi.disconnect();
-        WiFi.begin(ssid, password);
-        delay(5000);
-        if(WiFi.status() != WL_CONNECTED)
-          Serial.println("\n**** Wasn't possible to connect to the internet! ****\n\n Verify if SSID and password are correct!\n");
-        else{
-          Serial.println("\n --- WIFI OK! ---");
-        }
-      } else
-        Serial.println("\n --- WIFI OK! ---");
-    } else
-      Serial.println("\n* Skiping Wifi Test! *");
-    delay(1000);
+
+      if(WiFi.status() != WL_CONNECTED)
+        Serial.println("\n ***** Could not connect to WiFi *****\n");
+    }else
+      Serial.println("\n* Wifi Test Skipped! *");
 
     // Output pins
     Serial.println("\n → Starting output pins test!");
-    for(int i = 0; i < 19; i++){
+    for(int i = 0; i < 19; i++) {
       pinMode(outputPins[i], OUTPUT);
       digitalWrite(outputPins[i], HIGH);
       delay(50);
@@ -109,37 +80,35 @@ void setup()
       else
         Serial.printf("\n → OUTPUT PIN %d: *NOT OK*", outputPins[i]);
       digitalWrite(outputPins[i], LOW);
-    }  
-    delay(1000);
+      delay(50);
+    }
 
-    // Task
+    // Create Tasks
     xTaskCreatePinnedToCore(core_0, "core_0", 4096, NULL, 1, &core0_Handle, 0);
-    delay(250);
+    delay(100);
     xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
-    delay(250);
+    delay(100);
     
     // Input pins
-    if(testInput){
+    if(testInput) {
       Serial.println("\n\n → Starting input pins test");
       
-      for(int i = 0; i < 23; i++){
+      for(int i = 0; i < 23; i++) {
         pinMode(inputPins[i], INPUT);
-        delay(1);
+        delay(10);
       }
     
       Serial.println("");
       inputTestTime = millis();
     } else {
+      Serial.println("Input Test Skipped!");
       testCompleted = true;
     }
 }
 
 void loop() {
-  if(testInput){
-    if(!testCompleted)
-      testCompleted = verifyInputPins();
-
-    if(!testCompleted && millis() - inputTestTime >= 40000){
+  if(testInput) {
+    if(!testCompleted && millis() - inputTestTime >= 40000) {
       Serial.println("");
 
       IO2  ? Serial.print(""): Serial.println("IO2  NOT OK!");
@@ -192,35 +161,48 @@ void loop() {
     if (!IO35 && digitalRead(35)){    Serial.println("INPUT PIN 35: OK!");    IO35 = 1;  }
     if (!IO36 && digitalRead(36)){    Serial.println("INPUT PIN 36: OK!");    IO36 = 1;  }
     if (!IO39 && digitalRead(39)){    Serial.println("INPUT PIN 39: OK!");    IO39 = 1;  }
-  }
+
+    if(!testCompleted)
+      testCompleted = verifyInputPins();
+    else{
+      Serial.println("Input Test Finished!");
+      vTaskDelete(NULL);
+    }
+  }else
+    vTaskDelete(NULL);
+
   delay(10);
 }
 
-void core_0(void * pvParameters){
-  while(1){
-    if(!core0){
+void core_0(void * pvParameters) {
+  while(1) {
+    if(!core0) {
       core0 = 1;
       Serial.println("\n\n --- Core 0 OK! ---\n");
     }
-    if(taskTested && testCompleted){
-      Serial.println("\n//////////////////////////////////////////////////////////////////////////////////////////////////////////\n\n                 Test Completed!\n\n//////////////////////////////////////////////////////////////////////////////////////////////////////////\n");
+
+    if(taskTested && testCompleted) {
+      Serial.println("\n\n\n----- Test Completed! -----\n\n\n");
       vTaskDelete(core1_Handle);
       vTaskDelete(core0_Handle);
     }
+
     delay(100); 
   }
 }
 
-void core_1(void * pvParameters){
-  while(1){
-    if(!core1){
+void core_1(void * pvParameters) {
+  while(1) {
+    if(!core1) {
       core1 = 1;
-      Serial.println("\n\n --- Core 1 OK! ---\n");
+      Serial.println("\n --- Core 1 OK! ---\n");
     }
-    if(!taskTested && core0 && core1){
+
+    if(!taskTested && core0 && core1) {
       taskTested = 1;
       Serial.println("Tasks OK!");
     }
+
     delay(100); 
   }
 }
@@ -229,7 +211,6 @@ bool verifyInputPins(){
   if(IO2&&IO4&&IO5&&IO12&&IO13&&IO14&&IO15&&IO16&&IO17&&IO18&&IO19&&IO21&&IO22&&IO23&&IO25&&IO26&&IO27&&IO32&&IO33&&IO34&&IO35&&IO36&&IO39){
     Serial.println("\n --------------- Input pins are OK! ---------------");
     return 1;
-  } else{
+  }else
     return 0;
-  }
 }
