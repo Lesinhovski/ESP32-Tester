@@ -10,7 +10,7 @@
         ∘ Output pins;
         ∘ Input pins;
   
-  v1.4.0
+  v1.4.1
 
 
 ----------------------- User Area ----------------------- */
@@ -20,8 +20,8 @@ const char * ssid = "";
 const char * password = "";
 
 // Configuration
-bool testWifi = 0; 
-bool testInput = 0;
+bool testWifi = false; 
+bool testInput = false;
 
 /* ------------------------------------------------------ */
 
@@ -46,10 +46,7 @@ void setup() {
     Serial.println("\n------------ ESP32 Test Started! ------------");
     
     // WIFI TEST
-    if(ssid == ""){
-      Serial.println("Check your wifi ssid");
-      testWifi = false;      
-    } if(testWifi) {
+     if(testWifi) {
       Serial.println("\n → Initializing wifi Test!\n\nConnecting...");
       WiFi.begin(ssid, password);
 
@@ -64,8 +61,10 @@ void setup() {
         }
       }
 
-      if(WiFi.status() != WL_CONNECTED)
-        Serial.println("\n ***** Could not connect to WiFi *****\n");
+      if(WiFi.status() != WL_CONNECTED){
+        Serial.println("\n ***** Could not connect to WiFi *****");
+        Serial.println("Check if ssid and password are correct and try again.\n");
+      }
     }else
       Serial.println("\n* Wifi Test Skipped! *");
 
@@ -177,7 +176,7 @@ void loop() {
 void core_0(void * pvParameters) {
   while(1) {
     if(!core0) {
-      core0 = 1;
+      core0 = true;
       Serial.println("\n\n --- Core 0 OK! ---\n");
     }
 
@@ -194,12 +193,12 @@ void core_0(void * pvParameters) {
 void core_1(void * pvParameters) {
   while(1) {
     if(!core1) {
-      core1 = 1;
+      core1 = true;
       Serial.println("\n --- Core 1 OK! ---\n");
     }
 
     if(!taskTested && core0 && core1) {
-      taskTested = 1;
+      taskTested = true;
       Serial.println("Tasks OK!");
     }
 
@@ -210,7 +209,7 @@ void core_1(void * pvParameters) {
 bool verifyInputPins(){
   if(IO2&&IO4&&IO5&&IO12&&IO13&&IO14&&IO15&&IO16&&IO17&&IO18&&IO19&&IO21&&IO22&&IO23&&IO25&&IO26&&IO27&&IO32&&IO33&&IO34&&IO35&&IO36&&IO39){
     Serial.println("\n --------------- Input pins are OK! ---------------");
-    return 1;
+    return true;
   }else
-    return 0;
+    return false;
 }
