@@ -16,16 +16,15 @@
 ----------------------- User Area ----------------------- */
 
 // WiFi
-const char * ssid = "SmartLy-2.4GHz";
-const char * password = "Sm4r7ly.iot";
+const char * ssid = "";
+const char * password = "";
 
 // Configuration
 bool testOutput = true;
-bool testInput = true;
+bool testInput = false;
 bool testTask = true;
 bool testEEPROM = true;
-bool testWifi = true
-; 
+bool testWifi = false;
 
 /* ------------------------------------------------------ */
 
