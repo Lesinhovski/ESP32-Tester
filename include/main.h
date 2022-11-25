@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <EEPROM.h>
 
-#define TIME_TO_GET_RESULTS 10000
+#define TIME_TO_GET_RESULTS 60000
 #define EEPROM_SIZE 100
 
 /**
@@ -18,10 +18,3 @@ void core_0(void *pvParameters);
  * @param pvParameters 
  */
 void core_1(void *pvParameters);
-
-/**
- * @brief Verify if all the input pins are working correctly.
- * 
- * @return bool
- */
-bool verifyInputPins();

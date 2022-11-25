@@ -11,7 +11,7 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.0.0
+  v2.0.1
 
 ----------------------- User Area ----------------------- */
 
@@ -20,11 +20,11 @@ const char * ssid = "";
 const char * password = "";
 
 // Configuration
-bool testOutput = true;
-bool testInput = false;
-bool testTask = true;
-bool testEEPROM = true;
-bool testWifi = false;
+bool testOutput = 1;
+bool testInput = 0;
+bool testTask = 1;
+bool testEEPROM = 1;
+bool testWifi = 0;
 
 /* ------------------------------------------------------ */
 
@@ -116,7 +116,6 @@ void setup() {
         outputOK = false;
       }
       digitalWrite(outputPins[i], LOW);
-      delay(1);
     }
   } else {
     Serial.println("Output test skipped!");
@@ -209,7 +208,6 @@ void loop() {
 
     inputTestTime = millis();
   }
-
   delay(10);
 }
 
