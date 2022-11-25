@@ -1,6 +1,25 @@
-# ESP32-TESTER
+# ESP32-TESTER by "Lesinhovski"
 
-This code will test every ESP32 ports and tasks on both cores.
-Also will optionally test input ports and ESP32 WiFi.
-
-You can enable/disable WiFi and input tests changing the variables at User Area (main.cpp).
+Output Test:
+  Code writes 1 on every port and then read them, if they return 1, the port is working correctly.
+  
+Input Test:
+  Code waits for an input signal (You'll need to test them manually, or depending on your ESP32 Dev Board you can just touch the pins).
+  
+EEPROM Test:
+  Code writes 1 on every memory spaces and then read them, if they return 1, esp32 memory is working correctly.
+ 
+Wi-Fi Test:
+  The ESP32 will try to connect to wi-fi 5 times (3 seconds each).
+  
+Task Test:
+  The code will create 2 tasks, one task to core 0 and the other to the core 1.
+  
+  
+  
+  
+You can choose if you want to run all the tests or just some of them, you just need to change the variables on the "User Area" highlighted at main.cpp
+  0 = won't run 
+  1 = will run
+  
+You can also change EEPROM size and the time to get test results (default is 1 minute) at main.h
