@@ -1,4 +1,4 @@
-# ESP32-TESTER by "Lesinhovski"
+# ESP32-Tester by "Lesinhovski"
 
 Output Test:
   Code writes 1 on every port and then read them, if they return 1, the port is working correctly.
