@@ -11,13 +11,13 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.0.1
+  v2.1.0
 
 ----------------------- User Area ----------------------- */
 
 // WiFi
-const char * ssid = "";
-const char * password = "";
+const char * ssid = "wifiNameHere";
+const char * password = "wifiPasswordHere";
 
 // Configuration
 bool testOutput = 1;
@@ -35,7 +35,7 @@ byte outputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33};
 byte inputPins[] = {34,35,36,39};
 
 unsigned long resetMillis = 0, inputTestTime = 0;
-bool taskOK = 0, outputOK = 0, inputOK = 0, wifiOK = 0, eepromOK = 0, core0 = 0, core1 = 0,
+bool testFinished = 0, taskOK = 0, outputOK = 0, inputOK = 0, wifiOK = 0, eepromOK = 0, core0 = 0, core1 = 0,
 IO34 = 0, IO35 = 0, IO36 = 0, IO39 = 0;
 
 void setup() {
@@ -69,17 +69,15 @@ void setup() {
     delay(250);
     
     eepromOK ? Serial.println("\n --- EEPROM OK ---") : Serial.println("\n --- EEPROM FAILED ---");
-  } else {
+  } else 
     Serial.println("EEPROM test skipped.");
-    eepromOK = true;
-  }
   
   // WIFI
   if(testWifi) {
-    Serial.println("\n → Initializing wifi Test!\n\nConnecting...");
+    Serial.println("\n → Wi-fi test starting!\n\nConnecting...");
     
     WiFi.begin(ssid, password);
-    wifiOK = true;
+    wifiOK = false;
     for(int tries = 1; tries < 5; tries++) {
       Serial.printf("\n Tries: %d\n", tries);
       WiFi.disconnect();
@@ -87,18 +85,12 @@ void setup() {
       delay(3000);
       if(WiFi.status() == WL_CONNECTED) {
         Serial.println("\n --- WIFI OK! ---");
+        wifiOK = true;
         break;
       }
     }
-
-    if(WiFi.status() != WL_CONNECTED) {
-      Serial.println("Check if ssid and password are correct and try again.\n");
-      wifiOK = false;
-    }
-  } else {
-    Serial.println("WiFi Test skipped!");
-    wifiOK = true;
-  }
+  } else 
+    Serial.println("Wi-fi test skipped!");
 
   // OUTPUT
   if(testOutput) {
@@ -117,10 +109,8 @@ void setup() {
       }
       digitalWrite(outputPins[i], LOW);
     }
-  } else {
+  } else 
     Serial.println("Output test skipped!");
-    outputOK = true;
-  }
 
   // TASKS
   if(testTask) {
@@ -128,10 +118,8 @@ void setup() {
     delay(100);
     xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
     delay(100);
-  } else {
+  } else
     Serial.println("Task test skipped!");
-    taskOK = true;
-  }
   
   // INPUT
   if(testInput) {
@@ -144,10 +132,8 @@ void setup() {
   
     Serial.println("");
     inputTestTime = millis();
-  } else {
+  } else
     Serial.println("Input test skipped!");
-    inputOK = true;
-  }
 }
 
 void loop() {
@@ -169,8 +155,22 @@ void loop() {
     if(IO34 && IO35 && IO36 && IO39)
       inputOK = true;
   }
+  
+  if((testWifi && !wifiOK) && (!testInput || inputOK)) {
+    Serial.println("Retrying to establish connection with the wi-fi");
+    WiFi.begin(ssid, password);
+    while(millis() - inputTestTime <= TIME_TO_GET_RESULTS) {
+      Serial.print(".");
+      delay(3000);
+      if(WiFi.status() == WL_CONNECTED) {
+        Serial.println("--- WIFI OK! ---");
+        wifiOK = true;
+        break;
+      }
+    }
+  }
 
-  bool testFinished = (wifiOK && taskOK && outputOK && inputOK) ? true : false;
+  testFinished = ((wifiOK || !testWifi) && (taskOK || !testTask) && (outputOK || !testOutput) && (inputOK || !testInput)) ? true : false;
   if((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
     Serial.println("\n----------- Test Results ------------\n");
     
@@ -203,6 +203,12 @@ void loop() {
 
     if(testFinished) {
       Serial.println("Test finished!");
+
+      if(millis()/1000 == 1)
+        Serial.println("Test duration: 1 second.");
+      else
+        Serial.printf("\nTest duration: %d seconds.\n", int(millis()/1000));
+
       vTaskDelete(NULL);
     }
 

@@ -16,8 +16,6 @@ Task Test:
   The code will create 2 tasks, one task to core 0 and the other to the core 1.
   
   
-  
-  
 You can choose if you want to run all the tests or just some of them, you just need to change the variables on the "User Area" highlighted at main.cpp
   0 = won't run 
   1 = will run
