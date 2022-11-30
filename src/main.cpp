@@ -11,7 +11,7 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.1.1
+  v2.2.0
 
 ----------------------- User Area ----------------------- */
 
@@ -24,9 +24,12 @@ bool testOutput = 1;
 bool testInput = 0;
 bool testTask = 1;
 bool testEEPROM = 1;
+bool testNVS = 1; // Non Volatile Storage
 bool testWifi = 0;
 
 /* ------------------------------------------------------ */
+
+Preferences preferences;
 
 TaskHandle_t core0_Handle = NULL;
 TaskHandle_t core1_Handle = NULL;
@@ -35,12 +38,32 @@ byte outputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33};
 byte inputPins[] = {34,35,36,39};
 
 unsigned long resetMillis = 0, inputTestTime = 0;
-bool testFinished = 0, taskOK = 0, outputOK = 0, inputOK = 0, wifiOK = 0, eepromOK = 0, core0 = 0, core1 = 0,
+bool testFinished = 0, taskOK = 0, outputOK = 0, inputOK = 0, wifiOK = 0, spiffsOK = 0, nvsOK = 0, eepromOK = 0, core0 = 0, core1 = 0,
 IO34 = 0, IO35 = 0, IO36 = 0, IO39 = 0;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("\n-------- ESP32 Test Started! --------");
+
+  // NVS
+  if(testNVS) {
+    Serial.println("Starting NVS test.\n");
+    preferences.begin("nvs-test", false);
+    delay(10);
+
+    preferences.putInt("value", 1024);
+    delay(10);
+
+    if(preferences.getInt("value") == 1024) {
+      Serial.println("NVS OK");
+      nvsOK = true;
+
+      preferences.clear();
+      preferences.end();
+    } else
+      Serial.println("** NVS Not OK **");
+  } else
+    Serial.println("NVS test skipped.");
 
   // EEPROM
   if(testEEPROM) {
@@ -170,6 +193,7 @@ void loop() {
     }
   }
 
+  // Results
   testFinished = ((wifiOK || !testWifi) && (taskOK || !testTask) && (outputOK || !testOutput) && (inputOK || !testInput)) ? true : false;
   if((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
     Serial.println("\n----------- Test Results ------------\n");
@@ -190,7 +214,8 @@ void loop() {
     } else
       Serial.println("\n Input Pins: Test skipped.\n");
     
-    testEEPROM ? Serial.printf("\n EEPROM: %s.\n", eepromOK ? "OK" : "NOT OK") : Serial.println("\n EEPROM: Test skipped.");
+    testEEPROM ? Serial.printf("\n EEPROM: %s.", eepromOK ? "OK" : "NOT OK") : Serial.println("\n EEPROM: Test skipped.");
+    testNVS ? Serial.printf("\n NVS: %s.\n", nvsOK ? "OK" : "NOT OK") : Serial.println("\n NVS: Test skipped.");
     testWifi ? Serial.printf("\n WiFi: %s.\n", wifiOK ? "OK" : "NOT OK") : Serial.println("\n WiFi: Test skipped.");
 
     if(testTask) {

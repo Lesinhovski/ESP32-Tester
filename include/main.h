@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <EEPROM.h>
+#include <Preferences.h>
 
 #define TIME_TO_GET_RESULTS 60000
 #define EEPROM_SIZE 100
