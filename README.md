@@ -1,4 +1,4 @@
-# ESP32-Tester by "Lesinhovski"
+# ESP32 Tester
 
 Output Test:
   Code writes 1 on every port and then read them, if they return 1, the port is working correctly.
@@ -6,6 +6,9 @@ Output Test:
 Input Test:
   Code waits for an input signal (You'll need to test them manually, or depending on your ESP32 Dev Board you can just touch the pins).
   
+Non Volatile Storage Test:
+  Code writes 1024 to a key and read the value, if return 1024, NVS is working correctly.
+
 EEPROM Test:
   Code writes 1 on every memory spaces and then read them, if they return 1, esp32 memory is working correctly.
  
