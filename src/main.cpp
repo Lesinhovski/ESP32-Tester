@@ -11,13 +11,13 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.1.0
+  v2.1.1
 
 ----------------------- User Area ----------------------- */
 
-// WiFi
-const char * ssid = "wifiNameHere";
-const char * password = "wifiPasswordHere";
+// Wi-Fi
+const char * ssid = "Wi-Fi Name";
+const char * password = "Password";
 
 // Configuration
 bool testOutput = 1;
@@ -53,7 +53,7 @@ void setup() {
       delay(1);
     }
     EEPROM.commit();
-    delay(250);
+    delay(100);
 
     for(int i = 0; i < 100; i++) {
       if(EEPROM.readBool(i) != 1)
@@ -66,15 +66,15 @@ void setup() {
       delay(1);
     }
     EEPROM.commit();
-    delay(250);
+    delay(100);
     
-    eepromOK ? Serial.println("\n --- EEPROM OK ---") : Serial.println("\n --- EEPROM FAILED ---");
+    eepromOK ? Serial.println(" --- EEPROM OK ---\n") : Serial.println(" --- EEPROM FAILED ---\n");
   } else 
     Serial.println("EEPROM test skipped.");
   
   // WIFI
   if(testWifi) {
-    Serial.println("\n → Wi-fi test starting!\n\nConnecting...");
+    Serial.println("\n → Wi-Fi test starting!\n\nConnecting...");
     
     WiFi.begin(ssid, password);
     wifiOK = false;
@@ -90,7 +90,7 @@ void setup() {
       }
     }
   } else 
-    Serial.println("Wi-fi test skipped!");
+    Serial.println("Wi-Fi test skipped!");
 
   // OUTPUT
   if(testOutput) {
