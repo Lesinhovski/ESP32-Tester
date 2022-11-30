@@ -20,7 +20,7 @@ Task Test:
   
   
 You can choose if you want to run all the tests or just some of them, you just need to change the variables on the "User Area" highlighted at main.cpp
-  0 = won't run 
-  1 = will run
+  (0 = won't run) 
+  (1 = will run).
   
-You can also change EEPROM size and the time to get test results (default is 1 minute) at main.h
+You can also change EEPROM size and the time to get test results at main.h (default = 1 minute).
