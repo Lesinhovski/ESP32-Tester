@@ -5,7 +5,7 @@ Output Test:
   
 Input Test:
   Code waits for an input signal (You'll need to test them manually, or depending on your ESP32 Dev Board you can just touch the pins).
-  ![ESP32 Dev Board](https://m.media-amazon.com/images/I/61kdfLHWvIL._SX466_.jpg)
+  ![ESP32 Dev Board](https://sc04.alicdn.com/kf/H7f8208b9631740c986aa6192e0ae2628j.jpg)
  
 Non Volatile Storage Test:
   Code writes 1024 to a key and read the value, if return 1024, NVS is working correctly.
