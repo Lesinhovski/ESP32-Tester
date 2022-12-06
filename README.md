@@ -16,7 +16,7 @@ Wi-Fi Test:
   The ESP32 will try to connect to wi-fi 5 times (3 seconds each).
   
 Task Test:
-  The code will create 2 tasks, one task to core 0 and the other to the core 1.
+  The code will create 2 tasks, one on core 0 and the other on core 1.
   
   
 You can choose if you want to run all the tests or just some of them, you just need to change the variables on the "User Area" highlighted at main.cpp
