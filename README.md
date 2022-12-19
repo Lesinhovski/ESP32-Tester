@@ -11,22 +11,37 @@ How to use this code.
 0 = Don't run the test.
 
 User Area will look like this ->
+ 
 ----------------------- User Area ----------------------- */
-
+ 
+ 
 // Wi-Fi
+ 
 const char * ssid = "Wi-Fi Name";
+ 
 const char * password = "Password";
+ 
 
 // Configuration
+ 
 bool testOutput = 1;
+ 
 bool testInput = 0;
+ 
 bool testTask = 1;
+ 
 bool testEEPROM = 1;
+ 
 bool testSPIFFS = 1;
+ 
 bool testNVS = 1;
+ 
 bool testWifi = 1; 
+ 
 
+ 
 /* ------------------------------------------------------ */
+ 
 
 2 - Upload the code to your ESP32 and open the Serial Monitor.
 
