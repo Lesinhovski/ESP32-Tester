@@ -11,7 +11,7 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.3.0
+  v2.3.1
 
 ----------------------- User Area ----------------------- */
 
@@ -62,12 +62,12 @@ void setup() {
     }
     file.close();
 
-    if(spiffsOK){
-
+    if (spiffsOK) {
       file = SPIFFS.open("/testSPIFFS.txt");
 
-      while(file.available()){
+      while (file.available()) {
         Serial.write(file.read());
+        delay(1);
       }
       
       file.close();
@@ -76,7 +76,7 @@ void setup() {
     Serial.println("SPIFFS test skipped.");
 
   // NVS
-  if(testNVS) {
+  if (testNVS) {
     Serial.println("\n → NVS test starting!");
     preferences.begin("nvs-test", false);
     delay(10);
@@ -84,7 +84,7 @@ void setup() {
     preferences.putInt("value", 1024);
     delay(10);
 
-    if(preferences.getInt("value") == 1024) {
+    if (preferences.getInt("value") == 1024) {
       Serial.println("NVS OK");
       nvsOK = true;
 
@@ -96,25 +96,25 @@ void setup() {
     Serial.println("NVS test skipped.");
 
   // EEPROM
-  if(testEEPROM) {
+  if (testEEPROM) {
     Serial.println("\n →  EEPROM test starting!");
     EEPROM.begin(EEPROM_SIZE);
     eepromOK = true;
 
-    for(int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; i++) {
       EEPROM.writeBool(i, 1);
       delay(1);
     }
     EEPROM.commit();
     delay(100);
 
-    for(int i = 0; i < 100; i++) {
-      if(EEPROM.readBool(i) != 1)
+    for (int i = 0; i < 100; i++) {
+      if (EEPROM.readBool(i) != 1)
         eepromOK = false;
       delay(1);
     }
 
-    for(int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; i++) {
       EEPROM.writeBool(i, 0);
       delay(1);
     }
@@ -126,17 +126,17 @@ void setup() {
     Serial.println("EEPROM test skipped.");
   
   // WIFI
-  if(testWifi) {
+  if (testWifi) {
     Serial.println("\n → Wi-Fi test starting!\n\nConnecting...");
     
     WiFi.begin(ssid, password);
     wifiOK = false;
-    for(int tries = 1; tries < 5; tries++) {
+    for (int tries = 1; tries < 5; tries++) {
       Serial.printf("\n Tries: %d\n", tries);
       WiFi.disconnect();
       WiFi.begin();
       delay(3000);
-      if(WiFi.status() == WL_CONNECTED) {
+      if (WiFi.status() == WL_CONNECTED) {
         Serial.println("\n --- WIFI OK! ---");
         wifiOK = true;
         break;
@@ -146,15 +146,15 @@ void setup() {
     Serial.println("Wi-Fi test skipped!");
 
   // OUTPUT
-  if(testOutput) {
+  if (testOutput) {
     Serial.println("\n → Starting output pins test!");
     outputOK = true;
-    for(int i = 0; i < 19; i++) {
+    for (int i = 0; i < 19; i++) {
       pinMode(outputPins[i], OUTPUT);
       delay(10);
       digitalWrite(outputPins[i], HIGH);
       delay(10);
-      if(digitalRead(outputPins[i]))
+      if (digitalRead(outputPins[i]))
         Serial.printf("\n → OUTPUT PIN %d: OK!", outputPins[i]);
       else {
         Serial.printf("\n → OUTPUT PIN %d: *NOT OK*", outputPins[i]);
@@ -166,7 +166,7 @@ void setup() {
     Serial.println("Output test skipped!");
 
   // TASKS
-  if(testTask) {
+  if (testTask) {
     xTaskCreatePinnedToCore(core_0, "core_0", 4096, NULL, 1, &core0_Handle, 0);
     delay(100);
     xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
@@ -175,10 +175,10 @@ void setup() {
     Serial.println("Task test skipped!");
   
   // INPUT
-  if(testInput) {
+  if (testInput) {
     Serial.println("\n\n → Starting input pins test");
     
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
       pinMode(inputPins[i], INPUT);
       delay(10);
     }
@@ -190,7 +190,7 @@ void setup() {
 }
 
 void loop() {
-  if(testInput) {
+  if (testInput) {
     if (!IO34 && digitalRead(34)) {
       Serial.println("INPUT PIN 34: OK!");
       IO34 = true;
@@ -205,17 +205,17 @@ void loop() {
       IO39 = true;
     }
 
-    if(IO34 && IO35 && IO36 && IO39)
+    if (IO34 && IO35 && IO36 && IO39)
       inputOK = true;
   }
   
-  if((testWifi && !wifiOK) && (!testInput || inputOK)) {
+  if ((testWifi && !wifiOK) && (!testInput || inputOK)) {
     Serial.println("Retrying to establish connection with the wi-fi");
     WiFi.begin(ssid, password);
-    while(millis() - inputTestTime <= TIME_TO_GET_RESULTS) {
+    while (millis() - inputTestTime <= TIME_TO_GET_RESULTS) {
       Serial.print(".");
       delay(3000);
-      if(WiFi.status() == WL_CONNECTED) {
+      if (WiFi.status() == WL_CONNECTED) {
         Serial.println("--- WIFI OK! ---");
         wifiOK = true;
         break;
@@ -225,15 +225,15 @@ void loop() {
 
   // Results
   testFinished = ((wifiOK || !testWifi) && (taskOK || !testTask) && (inputOK || !testInput)) ? true : false;
-  if((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
+  if ((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
     Serial.println("\n----------- Test Results ------------");
     
     testOutput ? Serial.printf("\n Output Pins: %s.", outputOK ? "OK" : "One or more pins didn't work") 
       : Serial.print("\n Output Pins: Test skipped.");
     
-    if(testInput) {
+    if (testInput) {
       Serial.printf("\n Input Pins: %s.", inputOK ? "OK" : "One or more pins didn't work");
-      if(!inputOK){
+      if (!inputOK) {
         Serial.print("\nInput Pins that aren't working: ");
         IO34 ? Serial.print("") : Serial.print("IO34, ");
         IO35 ? Serial.print("") : Serial.print("IO35, ");
@@ -249,17 +249,17 @@ void loop() {
     testNVS ? Serial.printf("\n NVS: %s.", nvsOK ? "OK" : "NOT OK") : Serial.print("\n NVS: Test skipped.");
     testWifi ? Serial.printf("\n WiFi: %s.", wifiOK ? "OK" : "NOT OK") : Serial.print("\n WiFi: Test skipped.");
 
-    if(testTask) {
+    if (testTask) {
       Serial.printf("\n Core 0: %s.", core0 ? "OK" : "NOT OK");
       Serial.printf("\n Core 1: %s.\n", core1 ? "OK" : "NOT OK");
     } else
       Serial.print("\n Tasks: Test skipped.");
 
     Serial.println("\n-------------------------------------");
-    if(testFinished) {
+    if (testFinished) {
       Serial.println("Test finished!");
 
-      if(millis()/1000 == 1)
+      if (millis()/1000 == 1)
         Serial.println("Test duration: 1 second.");
       else
         Serial.printf("Test duration: %d seconds.\n", int(millis()/1000));
@@ -272,13 +272,13 @@ void loop() {
 }
 
 void core_0(void * pvParameters) {
-  while(1) {
-    if(!core0) {
+  while (1) {
+    if (!core0) {
       core0 = true;
       Serial.println("\n\n --- Core 0 OK! ---\n");
     }
 
-    if(taskOK) {
+    if (taskOK) {
       vTaskDelete(core1_Handle);
       vTaskDelete(core0_Handle);
     }
@@ -288,13 +288,13 @@ void core_0(void * pvParameters) {
 }
 
 void core_1(void * pvParameters) {
-  while(1) {
-    if(!core1) {
+  while (1) {
+    if (!core1) {
       core1 = true;
       Serial.println("\n --- Core 1 OK! ---\n");
     }
 
-    if(!taskOK && core0 && core1) {
+    if (!taskOK && core0 && core1) {
       taskOK = true;
       Serial.println("Tasks OK!");
     }
