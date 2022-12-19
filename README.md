@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 # ESP32 Tester
 
+=======
+>>>>>>> 67db5d7aee891d4f33715f2b0ee8cf70fefb985d
 How to use this code.
 
 1 - Go to User Area at src/main.cpp Choose what tests you want to run and enter your Wi-Fi credentials(must be a 2.4GHz wifi).
