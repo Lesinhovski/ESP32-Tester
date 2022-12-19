@@ -11,7 +11,7 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.2.0
+  v2.3.0
 
 ----------------------- User Area ----------------------- */
 
@@ -20,12 +20,13 @@ const char * ssid = "Wi-Fi Name";
 const char * password = "Password";
 
 // Configuration
-bool testOutput = 1;
-bool testInput = 0;
-bool testTask = 1;
-bool testEEPROM = 1;
-bool testNVS = 1; // Non Volatile Storage
-bool testWifi = 0;
+bool testOutput = 1;    // Test all output pins.
+bool testInput = 0;     // Test input pins.
+bool testTask = 1;      // Test task functions on both cores.
+bool testEEPROM = 1;    // Electrically erasable programmable read-only memory
+bool testSPIFFS = 1;    // SPI Flash File System
+bool testNVS = 1;       // Non Volatile Storage
+bool testWifi = 0;      // Test ESP32 Wi-Fi
 
 /* ------------------------------------------------------ */
 
@@ -45,9 +46,38 @@ void setup() {
   Serial.begin(115200);
   Serial.println("\n-------- ESP32 Test Started! --------");
 
+  // SPIFFS
+  if (testSPIFFS) {
+    Serial.println(" → SPIFFS test starting!");
+    if (!SPIFFS.begin(true))
+      Serial.println("Mounting SPIFFS");
+
+    File file = SPIFFS.open("/testSPIFFS.txt", FILE_WRITE);
+    if (file.print("SPIFFS OK!\n")) { 
+      spiffsOK = true;
+      Serial.println("File was written");
+    } else {
+      spiffsOK = false;
+      Serial.println("File write failed");
+    }
+    file.close();
+
+    if(spiffsOK){
+
+      file = SPIFFS.open("/testSPIFFS.txt");
+
+      while(file.available()){
+        Serial.write(file.read());
+      }
+      
+      file.close();
+    }
+  } else
+    Serial.println("SPIFFS test skipped.");
+
   // NVS
   if(testNVS) {
-    Serial.println("Starting NVS test.\n");
+    Serial.println("\n → NVS test starting!");
     preferences.begin("nvs-test", false);
     delay(10);
 
@@ -67,7 +97,7 @@ void setup() {
 
   // EEPROM
   if(testEEPROM) {
-    Serial.println("Starting EEPROM test.\n");
+    Serial.println("\n →  EEPROM test starting!");
     EEPROM.begin(EEPROM_SIZE);
     eepromOK = true;
 
@@ -194,12 +224,12 @@ void loop() {
   }
 
   // Results
-  testFinished = ((wifiOK || !testWifi) && (taskOK || !testTask) && (outputOK || !testOutput) && (inputOK || !testInput)) ? true : false;
+  testFinished = ((wifiOK || !testWifi) && (taskOK || !testTask) && (inputOK || !testInput)) ? true : false;
   if((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
-    Serial.println("\n----------- Test Results ------------\n");
+    Serial.println("\n----------- Test Results ------------");
     
-    testOutput ? Serial.printf("\n Output Pins: %s.\n", outputOK ? "OK" : "One or more pins didn't work") 
-      : Serial.println("\n Output Pins: Test skipped.");
+    testOutput ? Serial.printf("\n Output Pins: %s.", outputOK ? "OK" : "One or more pins didn't work") 
+      : Serial.print("\n Output Pins: Test skipped.");
     
     if(testInput) {
       Serial.printf("\n Input Pins: %s.", inputOK ? "OK" : "One or more pins didn't work");
@@ -209,34 +239,33 @@ void loop() {
         IO35 ? Serial.print("") : Serial.print("IO35, ");
         IO36 ? Serial.print("") : Serial.print("IO36, "); 
         IO39 ? Serial.print("") : Serial.print("IO39. ");
+        Serial.println("");
       }
-      Serial.println("");
     } else
-      Serial.println("\n Input Pins: Test skipped.\n");
+      Serial.print("\n Input Pins: Test skipped.");
     
-    testEEPROM ? Serial.printf("\n EEPROM: %s.", eepromOK ? "OK" : "NOT OK") : Serial.println("\n EEPROM: Test skipped.");
-    testNVS ? Serial.printf("\n NVS: %s.\n", nvsOK ? "OK" : "NOT OK") : Serial.println("\n NVS: Test skipped.");
-    testWifi ? Serial.printf("\n WiFi: %s.\n", wifiOK ? "OK" : "NOT OK") : Serial.println("\n WiFi: Test skipped.");
+    testEEPROM ? Serial.printf("\n EEPROM: %s.", eepromOK ? "OK" : "NOT OK") : Serial.print("\n EEPROM: Test skipped.");
+    testSPIFFS ? Serial.printf("\n SPIFFS: %s.", spiffsOK ? "OK" : "NOT OK") : Serial.print("\n SPIFFS: Test skipped.");
+    testNVS ? Serial.printf("\n NVS: %s.", nvsOK ? "OK" : "NOT OK") : Serial.print("\n NVS: Test skipped.");
+    testWifi ? Serial.printf("\n WiFi: %s.", wifiOK ? "OK" : "NOT OK") : Serial.print("\n WiFi: Test skipped.");
 
     if(testTask) {
       Serial.printf("\n Core 0: %s.", core0 ? "OK" : "NOT OK");
       Serial.printf("\n Core 1: %s.\n", core1 ? "OK" : "NOT OK");
     } else
-      Serial.println("\n Tasks: Test skipped.");
+      Serial.print("\n Tasks: Test skipped.");
 
     Serial.println("\n-------------------------------------");
-
     if(testFinished) {
       Serial.println("Test finished!");
 
       if(millis()/1000 == 1)
         Serial.println("Test duration: 1 second.");
       else
-        Serial.printf("\nTest duration: %d seconds.\n", int(millis()/1000));
+        Serial.printf("Test duration: %d seconds.\n", int(millis()/1000));
 
       vTaskDelete(NULL);
     }
-
     inputTestTime = millis();
   }
   delay(10);

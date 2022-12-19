@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <EEPROM.h>
 #include <Preferences.h>
+#include <SPIFFS.h>
 
 #define TIME_TO_GET_RESULTS 60000
 #define EEPROM_SIZE 100
