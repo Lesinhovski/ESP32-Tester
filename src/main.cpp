@@ -9,9 +9,11 @@
         ∘ Input pins;
         ∘ Cores;
         ∘ Wi-Fi;
-        ∘ EEPROM.
+        ∘ EEPROM;
+        ° Non Volatile Storage;
+        ° SPIFFS.
   
-  v2.3.2
+  v2.3.3
 
 ----------------------- User Area ----------------------- */
 
@@ -20,13 +22,13 @@ const char * ssid = "Wi-Fi Name";
 const char * password = "Password";
 
 // Configuration
-bool testOutput = 1;    // Test all output pins.
-bool testInput = 0;     // Test input pins.
-bool testTask = 1;      // Test task functions on both cores.
-bool testEEPROM = 1;    // Electrically erasable programmable read-only memory
-bool testSPIFFS = 1;    // SPI Flash File System
-bool testNVS = 1;       // Non Volatile Storage
-bool testWifi = 0;      // Test ESP32 Wi-Fi
+bool testOutput = 1;
+bool testInput = 0;
+bool testTask = 1;
+bool testEEPROM = 1;
+bool testSPIFFS = 1;
+bool testNVS = 1;
+bool testWifi = 0; 
 
 /* ------------------------------------------------------ */
 
