@@ -2,7 +2,7 @@
 
 How to use this code.
 
-1 - Go to User Area at src/main.cpp Choose what tests you want to run and enter your Wi-Fi credentials(must be a 2.4GHz wifi).
+1 - Go to User Area at src/main.cpp, select what tests you want to run and enter your Wi-Fi credentials(must be a 2.4GHz wifi).
 
 1 = Run the test.
 0 = Don't run the test.
