@@ -11,7 +11,7 @@
         ∘ Wi-Fi;
         ∘ EEPROM.
   
-  v2.3.1
+  v2.3.2
 
 ----------------------- User Area ----------------------- */
 
@@ -85,7 +85,7 @@ void setup() {
     delay(10);
 
     if (preferences.getInt("value") == 1024) {
-      Serial.println("NVS OK");
+      Serial.println("NVS OK!");
       nvsOK = true;
 
       preferences.clear();
@@ -121,7 +121,7 @@ void setup() {
     EEPROM.commit();
     delay(100);
     
-    eepromOK ? Serial.println(" --- EEPROM OK ---\n") : Serial.println(" --- EEPROM FAILED ---\n");
+    eepromOK ? Serial.println("EEPROM OK\n") : Serial.println("EEPROM FAILED\n");
   } else 
     Serial.println("EEPROM test skipped.");
   
@@ -155,9 +155,9 @@ void setup() {
       digitalWrite(outputPins[i], HIGH);
       delay(10);
       if (digitalRead(outputPins[i]))
-        Serial.printf("\n → OUTPUT PIN %d: OK!", outputPins[i]);
+        Serial.printf("\n OUTPUT PIN %d: OK!", outputPins[i]);
       else {
-        Serial.printf("\n → OUTPUT PIN %d: *NOT OK*", outputPins[i]);
+        Serial.printf("\n OUTPUT PIN %d: *NOT OK*", outputPins[i]);
         outputOK = false;
       }
       digitalWrite(outputPins[i], LOW);
@@ -192,16 +192,16 @@ void setup() {
 void loop() {
   if (testInput) {
     if (!IO34 && digitalRead(34)) {
-      Serial.println("INPUT PIN 34: OK!");
+      Serial.println(" INPUT PIN 34: OK!");
       IO34 = true;
     }if (!IO35 && digitalRead(35)) {
-      Serial.println("INPUT PIN 35: OK!");
+      Serial.println(" INPUT PIN 35: OK!");
       IO35 = true;
     }if (!IO36 && digitalRead(36)) { 
-      Serial.println("INPUT PIN 36: OK!");
+      Serial.println(" INPUT PIN 36: OK!");
       IO36 = true;
     }if (!IO39 && digitalRead(39)) {
-      Serial.println("INPUT PIN 39: OK!");
+      Serial.println(" INPUT PIN 39: OK!");
       IO39 = true;
     }
 
@@ -210,7 +210,7 @@ void loop() {
   }
   
   if ((testWifi && !wifiOK) && (!testInput || inputOK)) {
-    Serial.println("Retrying to establish connection with the wi-fi");
+    Serial.println("Retrying to establish connection with the Wi-Fi");
     WiFi.begin(ssid, password);
     while (millis() - inputTestTime <= TIME_TO_GET_RESULTS) {
       Serial.print(".");
@@ -259,7 +259,7 @@ void loop() {
     if (testFinished) {
       Serial.println("Test finished!");
 
-      if (millis()/1000 == 1)
+      if (int(millis()/1000) == 1)
         Serial.println("Test duration: 1 second.");
       else
         Serial.printf("Test duration: %d seconds.\n", int(millis()/1000));
