@@ -15,10 +15,12 @@ User Area will look like this ->
 // Wi-Fi
  
 const char * ssid = "Wi-Fi Name"; 
+
 const char * password = "Password";
  
 
 // Configuration
+
 bool testOutput = 1;
 
 bool testInput = 0;
