@@ -20,11 +20,17 @@ const char * password = "Password";
 
 // Configuration
 bool testOutput = 1;
+
 bool testInput = 0;
+
 bool testTask = 1;
+
 bool testEEPROM = 1;
+
 bool testSPIFFS = 1;
+
 bool testNVS = 1;
+
 bool testWifi = 1; 
  
 
