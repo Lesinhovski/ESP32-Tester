@@ -11,6 +11,9 @@ Non Volatile Storage Test:
 
 EEPROM Test:
   Code writes 1 on every memory spaces and then read them, if they return 1, esp32 memory is working correctly.
+  
+SPIFFS Test:
+  Code writes a file and then read it.
  
 Wi-Fi Test:
   The ESP32 will try to connect to wi-fi 5 times (3 seconds each).
