@@ -1,29 +1,28 @@
-# ESP32 Tester
+How to use this code.
 
-Output Test:
-  Code writes 1 on every port and then read them, if they return 1, the port is working correctly.
-  
-Input Test:
-  Code waits for an input signal (You'll need to test them manually, or depending on your ESP32 Dev Board you can just touch the pins).
- 
-Non Volatile Storage Test:
-  Code writes 1024 to a key and read the value, if return 1024, NVS is working correctly.
+1 - Go to User Area at src/main.cpp Choose what tests you want to run and enter your Wi-Fi credentials(must be a 2.4GHz wifi).
 
-EEPROM Test:
-  Code writes 1 on every memory spaces and then read them, if they return 1, esp32 memory is working correctly.
-  
-SPIFFS Test:
-  Code writes a file and then read it.
- 
-Wi-Fi Test:
-  The ESP32 will try to connect to wi-fi 5 times (3 seconds each).
-  
-Task Test:
-  The code will create 2 tasks, one on core 0 and the other on core 1.
-  
-  
-You can choose if you want to run all the tests or just some of them, you just need to change the variables on the "User Area" highlighted at main.cpp
-  (0 = won't run) 
-  (1 = will run).
-  
-You can also change EEPROM size and the time to get test results at main.h (default = 1 minute).
+1 = Run the test.
+0 = Don't run the test.
+
+User Area will look like this ->
+----------------------- User Area ----------------------- */
+
+// Wi-Fi
+const char * ssid = "Wi-Fi Name";
+const char * password = "Password";
+
+// Configuration
+bool testOutput = 1;
+bool testInput = 0;
+bool testTask = 1;
+bool testEEPROM = 1;
+bool testSPIFFS = 1;
+bool testNVS = 1;
+bool testWifi = 1; 
+
+/* ------------------------------------------------------ */
+
+2 - Upload the code to your ESP32 and open the Serial Monitor.
+
+3 - In the end of the script, will appear on your serial monitor the test results and its duration.
