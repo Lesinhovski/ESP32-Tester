@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.3.6
+  v2.3.7
 
 ----------------------- User Area ----------------------- */
 
@@ -95,7 +95,7 @@ void setup() {
     } else
       Serial.println("** NVS NOT OK **");
   } else
-    Serial.println("NVS test skipped.");
+    Serial.println("\nNVS test skipped.");
 
   // EEPROM
   if (testEEPROM) {
@@ -125,7 +125,7 @@ void setup() {
     
     eepromOK ? Serial.println(" EEPROM OK") : Serial.println(" EEPROM FAILED");
   } else 
-    Serial.println("EEPROM test skipped.");
+    Serial.println("\nEEPROM test skipped.");
   
   // WIFI
   if (testWifi) {
@@ -137,13 +137,13 @@ void setup() {
       Serial.print(".");
       delay(1000);
       if (WiFi.status() == WL_CONNECTED) {
-        Serial.println(" Connected! \n WIFI OK!");
+        Serial.println(" Connected!\n WIFI OK!");
         wifiOK = true;
         break;
       }
     }
   } else 
-    Serial.println("Wi-Fi test skipped!");
+    Serial.println("\nWi-Fi test skipped!");
 
   // TASKS
   if (testTask) {
@@ -153,11 +153,11 @@ void setup() {
     xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
     delay(200);
   } else
-    Serial.println("Task test skipped!");
+    Serial.println("\nTask test skipped!");
   
   // OUTPUT
   if (testOutput) {
-    Serial.print("\n → Output pins test started!");
+    Serial.println("\n → Output pins test started!");
     outputOK = true;
     for (int i = 0; i < 19; i++) {
       pinMode(outputPins[i], OUTPUT);
@@ -165,19 +165,19 @@ void setup() {
       digitalWrite(outputPins[i], HIGH);
       delay(10);
       if (digitalRead(outputPins[i]))
-        Serial.printf("\n OUTPUT PIN %d: OK!", outputPins[i]);
+        Serial.printf(" OUTPUT PIN %d: OK!\n", outputPins[i]);
       else {
-        Serial.printf("\n OUTPUT PIN %d: *NOT OK*", outputPins[i]);
+        Serial.printf(" OUTPUT PIN %d: *NOT OK*\n", outputPins[i]);
         outputOK = false;
       }
       digitalWrite(outputPins[i], LOW);
     }
   } else 
-    Serial.println("Output test skipped!");
+    Serial.println("\nOutput test skipped!");
   
   // INPUT
   if (testInput) {
-    Serial.println("\n\n → Input pins test started!");
+    Serial.println("\n → Input pins test started!");
     
     for (int i = 0; i < 4; i++) {
       pinMode(inputPins[i], INPUT);
@@ -186,7 +186,7 @@ void setup() {
 
     inputTestTime = millis();
   } else
-    Serial.println("Input test skipped!");
+    Serial.println("\nInput test skipped!");
 }
 
 void loop() {
@@ -251,11 +251,11 @@ void loop() {
 
     if (testTask) {
       Serial.printf("\n Core 0: %s.", core0 ? "OK" : "NOT OK");
-      Serial.printf("\n Core 1: %s.\n", core1 ? "OK" : "NOT OK");
+      Serial.printf("\n Core 1: %s.", core1 ? "OK" : "NOT OK");
     } else
       Serial.print("\n Tasks: Test skipped.");
 
-    Serial.println("\n-------------------------------------");
+    Serial.println("\n\n-------------------------------------");
     if (testFinished) {
       Serial.println("Test finished!");
 
