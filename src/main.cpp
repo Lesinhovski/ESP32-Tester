@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.3.7
+  v2.3.8
 
 ----------------------- User Area ----------------------- */
 
@@ -28,7 +28,7 @@ bool testTask = 1;
 bool testEEPROM = 1;
 bool testSPIFFS = 1;
 bool testNVS = 1;
-bool testWifi = 1; 
+bool testWiFi = 1; 
 
 /* ------------------------------------------------------ */
 
@@ -81,11 +81,7 @@ void setup() {
   if (testNVS) {
     Serial.println("\n → NVS test started!");
     preferences.begin("nvs-test", false);
-    delay(10);
-
     preferences.putInt("value", 1024);
-    delay(10);
-
     if (preferences.getInt("value") == 1024) {
       Serial.println(" NVS OK!");
       nvsOK = true;
@@ -115,7 +111,6 @@ void setup() {
         eepromOK = false;
       delay(1);
     }
-
     for (int i = 0; i < EEPROM_SIZE; i++) {
       EEPROM.writeBool(i, 0);
       delay(1);
@@ -128,7 +123,7 @@ void setup() {
     Serial.println("\nEEPROM test skipped.");
   
   // WIFI
-  if (testWifi) {
+  if (testWiFi) {
     Serial.print("\n → Wi-Fi test started!\nConnecting...");
     
     WiFi.begin(ssid, password);
@@ -142,6 +137,8 @@ void setup() {
         break;
       }
     }
+    if (WiFi.status() != WL_CONNECTED) 
+      Serial.println("Couldn't connect to wi-fi\n Verify if your wi-fi ssid and password is inserted correctly at \"User Area\"");
   } else 
     Serial.println("\nWi-Fi test skipped!");
 
@@ -203,13 +200,12 @@ void loop() {
     }if (!IO39 && digitalRead(39)) {
       Serial.println(" INPUT PIN 39: OK!");
       IO39 = true;
-    }
-
-    if (IO34 && IO35 && IO36 && IO39)
+    }if (IO34 && IO35 && IO36 && IO39)
       inputOK = true;
   }
   
-  if ((testWifi && !wifiOK) && (!testInput || inputOK)) {
+  // Retry WiFi Connection
+  if ((testWiFi && !wifiOK) && (!testInput || inputOK)) {
     Serial.println("\n Retrying to establish connection with the Wi-Fi");
     WiFi.begin(ssid, password);
     while (millis() - inputTestTime <= TIME_TO_GET_RESULTS) {
@@ -223,10 +219,10 @@ void loop() {
     }
   }
 
-  // Results
-  testFinished = ((wifiOK || !testWifi) && (taskOK || !testTask) && (inputOK || !testInput)) ? true : false;
+  // Test Results
+  testFinished = ((wifiOK || !testWiFi) && (taskOK || !testTask) && (inputOK || !testInput));
   if ((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
-    Serial.println("\n----------- Test Results ------------");
+    Serial.println("\n\n----------- Test Results ------------");
     
     testOutput ? Serial.printf("\n Output Pins: %s.", outputOK ? "OK" : "One or more pins didn't work") 
       : Serial.print("\n Output Pins: Test skipped.");
@@ -247,7 +243,7 @@ void loop() {
     testEEPROM ? Serial.printf("\n EEPROM: %s.", eepromOK ? "OK" : "NOT OK") : Serial.print("\n EEPROM: Test skipped.");
     testSPIFFS ? Serial.printf("\n SPIFFS: %s.", spiffsOK ? "OK" : "NOT OK") : Serial.print("\n SPIFFS: Test skipped.");
     testNVS ? Serial.printf("\n NVS: %s.", nvsOK ? "OK" : "NOT OK") : Serial.print("\n NVS: Test skipped.");
-    testWifi ? Serial.printf("\n WiFi: %s.", wifiOK ? "OK" : "NOT OK") : Serial.print("\n WiFi: Test skipped.");
+    testWiFi ? Serial.printf("\n Wi-Fi: %s.", wifiOK ? "OK" : "NOT OK") : Serial.print("\n Wi-Fi: Test skipped.");
 
     if (testTask) {
       Serial.printf("\n Core 0: %s.", core0 ? "OK" : "NOT OK");
