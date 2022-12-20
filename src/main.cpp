@@ -13,13 +13,13 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.3.3
+  v2.3.4
 
 ----------------------- User Area ----------------------- */
 
 // Wi-Fi
-const char * ssid = "Wi-Fi Name";
-const char * password = "Password";
+const char * ssid = "ssid";
+const char * password = "password";
 
 // Configuration
 bool testOutput = 1;
@@ -28,7 +28,7 @@ bool testTask = 1;
 bool testEEPROM = 1;
 bool testSPIFFS = 1;
 bool testNVS = 1;
-bool testWifi = 0; 
+bool testWifi = 1; 
 
 /* ------------------------------------------------------ */
 
@@ -123,23 +123,21 @@ void setup() {
     EEPROM.commit();
     delay(100);
     
-    eepromOK ? Serial.println("EEPROM OK\n") : Serial.println("EEPROM FAILED\n");
+    eepromOK ? Serial.println("EEPROM OK") : Serial.println("EEPROM FAILED");
   } else 
     Serial.println("EEPROM test skipped.");
   
   // WIFI
   if (testWifi) {
-    Serial.println("\n → Wi-Fi test starting!\n\nConnecting...");
+    Serial.print("\n → Wi-Fi test starting!\n\nConnecting...");
     
     WiFi.begin(ssid, password);
     wifiOK = false;
-    for (int tries = 1; tries < 5; tries++) {
-      Serial.printf("\n Tries: %d\n", tries);
-      WiFi.disconnect();
-      WiFi.begin();
-      delay(3000);
+    for (int tries = 1; tries < 10; tries++) {
+      Serial.print(".");
+      delay(1000);
       if (WiFi.status() == WL_CONNECTED) {
-        Serial.println("\n --- WIFI OK! ---");
+        Serial.println(" Connected! \nWIFI OK!");
         wifiOK = true;
         break;
       }
@@ -170,15 +168,15 @@ void setup() {
   // TASKS
   if (testTask) {
     xTaskCreatePinnedToCore(core_0, "core_0", 4096, NULL, 1, &core0_Handle, 0);
-    delay(100);
+    delay(250);
     xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
-    delay(100);
+    delay(250);
   } else
     Serial.println("Task test skipped!");
   
   // INPUT
   if (testInput) {
-    Serial.println("\n\n → Starting input pins test");
+    Serial.println("\n → Starting input pins test");
     
     for (int i = 0; i < 4; i++) {
       pinMode(inputPins[i], INPUT);
@@ -277,7 +275,7 @@ void core_0(void * pvParameters) {
   while (1) {
     if (!core0) {
       core0 = true;
-      Serial.println("\n\n --- Core 0 OK! ---\n");
+      Serial.println("\n\n Core 0 OK!");
     }
 
     if (taskOK) {
@@ -293,12 +291,12 @@ void core_1(void * pvParameters) {
   while (1) {
     if (!core1) {
       core1 = true;
-      Serial.println("\n --- Core 1 OK! ---\n");
+      Serial.println(" Core 1 OK!");
     }
 
     if (!taskOK && core0 && core1) {
       taskOK = true;
-      Serial.println("Tasks OK!");
+      Serial.println(" Tasks OK!");
     }
 
     delay(100); 
