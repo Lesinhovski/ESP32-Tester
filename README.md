@@ -10,3 +10,4 @@ How to use this code.
 
 
   *All the tests are automated except the input pins test, you'll need to test them manually when it begins.
+    Input Only Pins: 34, 35, 36 and 39.
