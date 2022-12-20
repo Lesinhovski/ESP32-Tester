@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.3.4
+  v2.3.5
 
 ----------------------- User Area ----------------------- */
 
@@ -103,20 +103,20 @@ void setup() {
     EEPROM.begin(EEPROM_SIZE);
     eepromOK = true;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < EEPROM_SIZE; i++) {
       EEPROM.writeBool(i, 1);
       delay(1);
     }
     EEPROM.commit();
     delay(100);
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < EEPROM_SIZE; i++) {
       if (EEPROM.readBool(i) != 1)
         eepromOK = false;
       delay(1);
     }
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < EEPROM_SIZE; i++) {
       EEPROM.writeBool(i, 0);
       delay(1);
     }
