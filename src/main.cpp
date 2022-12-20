@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.3.5
+  v2.3.6
 
 ----------------------- User Area ----------------------- */
 
@@ -46,16 +46,16 @@ IO34 = 0, IO35 = 0, IO36 = 0, IO39 = 0;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("\n-------- ESP32 Test Started! --------");
+  Serial.println("\n-------- ESP32 Test Started! --------\n");
 
   // SPIFFS
   if (testSPIFFS) {
-    Serial.println(" → SPIFFS test starting!");
+    Serial.println(" → SPIFFS test started!");
     if (!SPIFFS.begin(true))
       Serial.println("Mounting SPIFFS");
 
     File file = SPIFFS.open("/testSPIFFS.txt", FILE_WRITE);
-    if (file.print("SPIFFS OK!\n")) { 
+    if (file.print(" SPIFFS OK!\n")) { 
       spiffsOK = true;
       Serial.println("File was written");
     } else {
@@ -79,7 +79,7 @@ void setup() {
 
   // NVS
   if (testNVS) {
-    Serial.println("\n → NVS test starting!");
+    Serial.println("\n → NVS test started!");
     preferences.begin("nvs-test", false);
     delay(10);
 
@@ -87,19 +87,19 @@ void setup() {
     delay(10);
 
     if (preferences.getInt("value") == 1024) {
-      Serial.println("NVS OK!");
+      Serial.println(" NVS OK!");
       nvsOK = true;
 
       preferences.clear();
       preferences.end();
     } else
-      Serial.println("** NVS Not OK **");
+      Serial.println("** NVS NOT OK **");
   } else
     Serial.println("NVS test skipped.");
 
   // EEPROM
   if (testEEPROM) {
-    Serial.println("\n →  EEPROM test starting!");
+    Serial.println("\n →  EEPROM test started!");
     EEPROM.begin(EEPROM_SIZE);
     eepromOK = true;
 
@@ -123,13 +123,13 @@ void setup() {
     EEPROM.commit();
     delay(100);
     
-    eepromOK ? Serial.println("EEPROM OK") : Serial.println("EEPROM FAILED");
+    eepromOK ? Serial.println(" EEPROM OK") : Serial.println(" EEPROM FAILED");
   } else 
     Serial.println("EEPROM test skipped.");
   
   // WIFI
   if (testWifi) {
-    Serial.print("\n → Wi-Fi test starting!\n\nConnecting...");
+    Serial.print("\n → Wi-Fi test started!\nConnecting...");
     
     WiFi.begin(ssid, password);
     wifiOK = false;
@@ -137,7 +137,7 @@ void setup() {
       Serial.print(".");
       delay(1000);
       if (WiFi.status() == WL_CONNECTED) {
-        Serial.println(" Connected! \nWIFI OK!");
+        Serial.println(" Connected! \n WIFI OK!");
         wifiOK = true;
         break;
       }
@@ -145,13 +145,23 @@ void setup() {
   } else 
     Serial.println("Wi-Fi test skipped!");
 
+  // TASKS
+  if (testTask) {
+    Serial.print("\n → Task test started!");
+    xTaskCreatePinnedToCore(core_0, "core_0", 4096, NULL, 1, &core0_Handle, 0);
+    delay(200);
+    xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
+    delay(200);
+  } else
+    Serial.println("Task test skipped!");
+  
   // OUTPUT
   if (testOutput) {
-    Serial.println("\n → Starting output pins test!");
+    Serial.print("\n → Output pins test started!");
     outputOK = true;
     for (int i = 0; i < 19; i++) {
       pinMode(outputPins[i], OUTPUT);
-      delay(10);
+      delay(1);
       digitalWrite(outputPins[i], HIGH);
       delay(10);
       if (digitalRead(outputPins[i]))
@@ -164,26 +174,16 @@ void setup() {
     }
   } else 
     Serial.println("Output test skipped!");
-
-  // TASKS
-  if (testTask) {
-    xTaskCreatePinnedToCore(core_0, "core_0", 4096, NULL, 1, &core0_Handle, 0);
-    delay(250);
-    xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
-    delay(250);
-  } else
-    Serial.println("Task test skipped!");
   
   // INPUT
   if (testInput) {
-    Serial.println("\n → Starting input pins test");
+    Serial.println("\n\n → Input pins test started!");
     
     for (int i = 0; i < 4; i++) {
       pinMode(inputPins[i], INPUT);
-      delay(10);
+      delay(1);
     }
-  
-    Serial.println("");
+
     inputTestTime = millis();
   } else
     Serial.println("Input test skipped!");
@@ -210,13 +210,13 @@ void loop() {
   }
   
   if ((testWifi && !wifiOK) && (!testInput || inputOK)) {
-    Serial.println("Retrying to establish connection with the Wi-Fi");
+    Serial.println("\n Retrying to establish connection with the Wi-Fi");
     WiFi.begin(ssid, password);
     while (millis() - inputTestTime <= TIME_TO_GET_RESULTS) {
       Serial.print(".");
       delay(3000);
       if (WiFi.status() == WL_CONNECTED) {
-        Serial.println("--- WIFI OK! ---");
+        Serial.println(" Connected!\n WIFI OK!");
         wifiOK = true;
         break;
       }
@@ -275,7 +275,7 @@ void core_0(void * pvParameters) {
   while (1) {
     if (!core0) {
       core0 = true;
-      Serial.println("\n\n Core 0 OK!");
+      Serial.println("\n Core 0 OK!");
     }
 
     if (taskOK) {
