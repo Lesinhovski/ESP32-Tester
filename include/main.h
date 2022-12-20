@@ -5,7 +5,7 @@
 #include <SPIFFS.h>
 
 #define TIME_TO_GET_RESULTS 60000
-#define EEPROM_SIZE 100
+#define EEPROM_SIZE 512
 
 /**
  * @brief Task assigned to core 0.
