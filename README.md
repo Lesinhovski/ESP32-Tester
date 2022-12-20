@@ -9,4 +9,4 @@ How to use this code.
 3 - In the end of the script, will appear on your serial monitor the test results and its duration.
 
 
-  *All the tests are automated exept the input pins test, you'll need to test them manually when it begins.
+  *All the tests are automated except the input pins test, you'll need to test them manually when it begins.
