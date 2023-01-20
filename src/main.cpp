@@ -41,7 +41,7 @@ byte outputPins[] = {2,4,5,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33};
 byte inputPins[] = {34,35,36,39};
 
 unsigned long resetMillis = 0, inputTestTime = 0;
-bool testFinished = 0, taskOK = 0, outputOK = 0, inputOK = 0, wifiOK = 0, spiffsOK = 0, nvsOK = 0, eepromOK = 0, core0 = 0, core1 = 0,
+bool testFinished = 0, outputOK = 0, inputOK = 0, wifiOK = 0, spiffsOK = 0, nvsOK = 0, eepromOK = 0, core0 = 0, core1 = 0,
 IO34 = 0, IO35 = 0, IO36 = 0, IO39 = 0;
 
 void setup() {
@@ -220,7 +220,7 @@ void loop() {
   }
 
   // Test Results
-  testFinished = ((wifiOK || !testWiFi) && (taskOK || !testTask) && (inputOK || !testInput));
+  testFinished = ((wifiOK || !testWiFi) && ((core0 && core1) || !testTask) && (inputOK || !testInput));
   if ((millis() - inputTestTime >= TIME_TO_GET_RESULTS || testFinished)) {
     Serial.println("\n\n----------- Test Results ------------");
     
@@ -269,32 +269,16 @@ void loop() {
 
 void core_0(void * pvParameters) {
   while (1) {
-    if (!core0) {
-      core0 = true;
-      Serial.println("\n Core 0 OK!");
-    }
-
-    if (taskOK) {
-      vTaskDelete(core1_Handle);
-      vTaskDelete(core0_Handle);
-    }
-
-    delay(100); 
+    core0 = true;
+    Serial.println("\n Core 0 OK!");
+    vTaskDelete(NULL);
   }
 }
 
 void core_1(void * pvParameters) {
   while (1) {
-    if (!core1) {
-      core1 = true;
-      Serial.println(" Core 1 OK!");
-    }
-
-    if (!taskOK && core0 && core1) {
-      taskOK = true;
-      Serial.println(" Tasks OK!");
-    }
-
-    delay(100); 
+    core1 = true;
+    Serial.println(" Core 1 OK!");
+    vTaskDelete(NULL);
   }
 }
