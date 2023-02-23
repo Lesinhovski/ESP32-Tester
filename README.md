@@ -6,7 +6,7 @@ How to use this code.
 
 **2 - Upload the code to your ESP32 then open the Serial Monitor.**
 
-**3 - In the end of the script, will appear on your serial monitor the test results and its duration.**
+**3 - In the end of the script, will be shown on your serial monitor the test results and its duration.**
 
 
   *All the tests are automated except the input pins test, you'll need to test them manually when it begins.
