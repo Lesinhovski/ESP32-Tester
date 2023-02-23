@@ -2,7 +2,7 @@
 
 How to use this code.
 
-**1 - Go to "User Area" at src/main.cpp, select what tests you want to run and enter your Wi-Fi credentials (must be a 2.4GHz wi-fi).**
+**1 - Go to "User Area" at src/main.cpp, select which tests you want to run then enter your Wi-Fi credentials (must be a 2.4GHz wi-fi).**
 
 **2 - Upload the code to your ESP32 then open the Serial Monitor.**
 
