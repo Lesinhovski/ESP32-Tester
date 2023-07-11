@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.3.8
+  v2.3.9
 
 ----------------------- User Area ----------------------- */
 
@@ -51,8 +51,8 @@ void setup() {
   // SPIFFS
   if (testSPIFFS) {
     Serial.println(" → SPIFFS test started!");
-    if (!SPIFFS.begin(true))
-      Serial.println("Mounting SPIFFS");
+    SPIFFS.begin(true);
+    Serial.println("Mounting SPIFFS");
 
     File file = SPIFFS.open("/testSPIFFS.txt", FILE_WRITE);
     if (file.print(" SPIFFS OK!\n")) { 
@@ -73,9 +73,10 @@ void setup() {
       }
       
       file.close();
+      if(SPIFFS.remove("/testSPIFFS.txt")) 
+        Serial.println("Test file deleted!");
     }
-  } else
-    Serial.println("SPIFFS test skipped.");
+  } else Serial.println("SPIFFS test skipped.");
 
   // NVS
   if (testNVS) {
@@ -88,10 +89,8 @@ void setup() {
 
       preferences.clear();
       preferences.end();
-    } else
-      Serial.println("** NVS NOT OK **");
-  } else
-    Serial.println("\nNVS test skipped.");
+    } else Serial.println("** NVS NOT OK **");
+  } else Serial.println("\nNVS test skipped.");
 
   // EEPROM
   if (testEEPROM) {
@@ -119,8 +118,7 @@ void setup() {
     delay(100);
     
     eepromOK ? Serial.println(" EEPROM OK") : Serial.println(" EEPROM FAILED");
-  } else 
-    Serial.println("\nEEPROM test skipped.");
+  } else Serial.println("\nEEPROM test skipped.");
   
   // WIFI
   if (testWiFi) {
@@ -139,8 +137,7 @@ void setup() {
     }
     if (WiFi.status() != WL_CONNECTED) 
       Serial.println("Couldn't connect to wi-fi\n Verify if your wi-fi ssid and password is inserted correctly at \"User Area\"");
-  } else 
-    Serial.println("\nWi-Fi test skipped!");
+  } else Serial.println("\nWi-Fi test skipped!");
 
   // TASKS
   if (testTask) {
@@ -149,8 +146,7 @@ void setup() {
     delay(200);
     xTaskCreatePinnedToCore(core_1, "core_1", 4096, NULL, 1, &core1_Handle, 1);
     delay(200);
-  } else
-    Serial.println("\nTask test skipped!");
+  } else Serial.println("\nTask test skipped!");
   
   // OUTPUT
   if (testOutput) {
@@ -169,8 +165,7 @@ void setup() {
       }
       digitalWrite(outputPins[i], LOW);
     }
-  } else 
-    Serial.println("\nOutput test skipped!");
+  } else Serial.println("\nOutput test skipped!");
   
   // INPUT
   if (testInput) {
@@ -182,8 +177,7 @@ void setup() {
     }
 
     inputTestTime = millis();
-  } else
-    Serial.println("\nInput test skipped!");
+  } else Serial.println("\nInput test skipped!");
 }
 
 void loop() {
@@ -237,8 +231,7 @@ void loop() {
         IO39 ? Serial.print("") : Serial.print("IO39. ");
         Serial.println("");
       }
-    } else
-      Serial.print("\n Input Pins: Test skipped.");
+    } else Serial.print("\n Input Pins: Test skipped.");
     
     testEEPROM ? Serial.printf("\n EEPROM: %s.", eepromOK ? "OK" : "NOT OK") : Serial.print("\n EEPROM: Test skipped.");
     testSPIFFS ? Serial.printf("\n SPIFFS: %s.", spiffsOK ? "OK" : "NOT OK") : Serial.print("\n SPIFFS: Test skipped.");
@@ -248,8 +241,7 @@ void loop() {
     if (testTask) {
       Serial.printf("\n Core 0: %s.", core0 ? "OK" : "NOT OK");
       Serial.printf("\n Core 1: %s.", core1 ? "OK" : "NOT OK");
-    } else
-      Serial.print("\n Tasks: Test skipped.");
+    } else Serial.print("\n Tasks: Test skipped.");
 
     Serial.println("\n\n-------------------------------------");
     if (testFinished) {
@@ -257,8 +249,7 @@ void loop() {
 
       if (int(millis()/1000) == 1)
         Serial.println("Test duration: 1 second.");
-      else
-        Serial.printf("Test duration: %d seconds.\n", int(millis()/1000));
+      else Serial.printf("Test duration: %d seconds.\n", int(millis()/1000));
 
       vTaskDelete(NULL);
     }
