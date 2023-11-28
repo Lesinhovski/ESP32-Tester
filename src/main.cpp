@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.5.0
+  v2.5.1
 
 ----------------------- User Area ----------------------- */
 
@@ -86,10 +86,10 @@ void setup() {
     if (preferences.getInt("value") == 1024) {
       Serial.println(" NVS OK!");
       nvsOK = true;
-
-      preferences.clear();
-      preferences.end();
     } else Serial.println("** NVS NOT OK **");
+
+    preferences.clear();
+    preferences.end();
   } else Serial.println("\nNVS test skipped.");
 
   // EEPROM
@@ -116,6 +116,8 @@ void setup() {
     }
     EEPROM.commit();
     delay(100);
+    EEPROM.end();
+    Serial.println("EEPROM Cleared");
     
     eepromOK ? Serial.println(" EEPROM OK") : Serial.println(" EEPROM FAILED");
   } else Serial.println("\nEEPROM test skipped.");
