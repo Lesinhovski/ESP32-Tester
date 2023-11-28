@@ -13,7 +13,7 @@
         ° Non Volatile Storage;
         ° SPIFFS.
   
-  v2.4.0
+  v2.5.0
 
 ----------------------- User Area ----------------------- */
 
@@ -137,6 +137,10 @@ void setup() {
     }
     if (WiFi.status() != WL_CONNECTED) 
       Serial.println("Couldn't connect to wi-fi\n Verify if your wi-fi ssid and password is inserted correctly at \"User Area\"");
+    else {
+      WiFi.disconnect(false, true);
+      Serial.println("SSID Erased");
+    }
   } else Serial.println("\nWi-Fi test skipped!");
 
   // TASKS
