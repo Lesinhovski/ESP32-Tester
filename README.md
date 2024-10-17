@@ -1,15 +1,13 @@
 # ESP32 Hardware Testing Code
 
-If you need to test multiple ESP32s, before soldering it on a board, this project is for you.
+If you need to test multiple ESP32 boards before soldering them onto a PCB, this project is for you.
 
-Follow the instructions:
+Follow these instructions:
 
-**1 - Open the project and search for "User Area" at src/main.cpp, select which tests that you want to run and enter your Wi-Fi credentials (must be a 2.4GHz wi-fi).**
+   **Open the project and locate the "User Area" section in src/main.cpp. Select the tests you want to run and enter your Wi-Fi credentials (must be on a 2.4GHz network).**
 
-**2 - Now, you just need to upload the code to your ESP32 then open the Serial Monitor.**
+   **Upload the code to your ESP32 and then open the Serial Monitor.**
 
-**3 - At the end of the script, will be shown on your serial monitor the test results and its duration.**
+   **At the end of the script, the test results and their duration will be displayed in the Serial Monitor.**
 
-
-  *All the tests are automated except the input pins one, you'll need to do it manually when it begins (You'll have one minute by default).
-    Input Only Pins: 34, 35, 36 and 39.
+*All tests are automated, except for the input pins. You will need to perform those tests manually when prompted (you'll have one minute by default). The input-only pins are: 34, 35, 36, and 39.
